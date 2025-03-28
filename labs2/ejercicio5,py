@@ -1,0 +1,13 @@
+def generate_binary_strings(n, result=''):
+    
+    if len(result) == n:
+        print(result)
+        return
+    
+    generate_binary_strings(n, result + '0')
+    
+    generate_binary_strings(n, result + '1')
+    
+if __name__ == "__main__":
+    n = 8 
+    generate_binary_strings(n)

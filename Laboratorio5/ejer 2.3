@@ -1,1 +1,98 @@
+#ejercicio 2.3
+class Node:
+    """Node class for the Linked List Queue."""
+    def __init__(self, data):
+        """Initialize node with data and next reference."""
+        self.data = data
+        self.next = None
 
+
+class LinkedQueue:
+    """Queue implementation using a linked list."""
+    
+    def __init__(self):
+        """Initialize an empty queue."""
+        self.front = None
+        self.rear = None
+        self.size_counter = 0
+    
+    def is_empty(self):
+        """Check if the queue is empty."""
+        return self.front is None
+    
+    def enqueue(self, item):
+        """Add an item to the rear of the queue."""
+        new_node = Node(item)
+        
+        if self.is_empty():
+            self.front = new_node
+        else:
+            self.rear.next = new_node
+            
+        self.rear = new_node
+        self.size_counter += 1
+    
+    def dequeue(self):
+        """Remove and return the front item from the queue."""
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        
+        item = self.front.data
+        self.front = self.front.next
+        
+        # If front becomes None, reset rear as well
+        if self.front is None:
+            self.rear = None
+            
+        self.size_counter -= 1
+        return item
+    def peek(self):
+        """Return the front item without removing it."""
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        return self.front.data
+    def size(self):
+        """Return the number of items in the queue."""
+        return self.size_counter
+    def __str__(self):
+        """Return a string representation of the queue."""
+        if self.is_empty():
+            return "Queue: []"
+        items = []
+        current = self.front
+        while current:
+            items.append(str(current.data))
+            current = current.next
+            
+        return f"Queue: [{', '.join(items)}]"
+def test_linked_queue():
+    """Test linked list queue implementation."""
+    print("\nTesting linked list queue implementation:")
+    queue = LinkedQueue()
+    print(f"Empty queue: {queue}")
+    print(f"Is empty? {queue.is_empty()}")
+    # Enqueue operations
+    for i in range(1, 6):
+        queue.enqueue(i * 10)
+        print(f"After enqueue({i*10}): {queue}")
+    # Test peek
+    print(f"Peek: {queue.peek()}")
+    print(f"Size: {queue.size()}")
+    # Test dequeue
+    print(f"Dequeue: {queue.dequeue()}")
+    print(f"After dequeue: {queue}")
+    # Enqueue more items
+    queue.enqueue(60)
+    print(f"After enqueue(60): {queue}")
+    # Empty the queue
+    while not queue.is_empty():
+        print(f"Dequeue: {queue.dequeue()}")
+    print(f"Final queue: {queue}")
+    # Test exception handling
+    try:
+        queue.dequeue()
+    except IndexError as e:
+        print(f"Error as expected: {e}")
+# Example usage
+if __name__ == "__main__":
+    test_linked_queue()

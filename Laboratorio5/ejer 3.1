@@ -1,1 +1,113 @@
+class Node:
+    """A node in the linked list."""
+    def __init__(self, value):
+        self.value = value
+        self.next = None
+class LinkedQueue:
+    """Queue implementation using a singly linked list."""
+    
+    def __init__(self):
+        self.front = None
+        self.rear = None
+        self._size = 0
+    
+    def is_empty(self):
+        return self.front is None
+    
+    def enqueue(self, item):
+        """Add item to the end of the queue."""
+        new_node = Node(item)
+        if self.is_empty():
+            self.front = new_node
+        else:
+            self.rear.next = new_node
+        self.rear = new_node
+        self._size += 1
+    def dequeue(self):
+        """Remove and return item from the front of the queue."""
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        removed_value = self.front.value
+        self.front = self.front.next
+        if self.front is None:
+            self.rear = None
+        self._size -= 1
+        return removed_value
+    
+    def size(self):
+        return self._size
+class PrintJob:
+    """Represent a print job with a name and number of pages."""
+    
+    def __init__(self, name, pages):
+        """Initialize a print job."""
+        self.name = name
+        self.pages = pages
+        self.time_submitted = 0
+    
+    def __str__(self):
+        """Return a string representation of the print job."""
+        return f"{self.name} ({self.pages} pages)"
+class Printer:
+    """Simulate a printer that processes jobs from a queue."""
+    
+    def __init__(self, pages_per_minute):
+        """Initialize a printer with a specific processing rate."""
+        self.page_rate = pages_per_minute
+        self.current_job = None
+        self.time_remaining = 0
+        self.jobs_completed = 0
+    
+    def is_busy(self):
+        """Check if the printer is currently busy."""
+        return self.current_job is not None
+    
+    def start_next_job(self, job):
+        """Start a new print job."""
+        self.current_job = job
+        self.time_remaining = job.pages * 60 / self.page_rate
+        print(f"Started printing: {job}")
+    
+    def tick(self):
+        """Simulate one second passing."""
+        if self.is_busy():
+            self.time_remaining -= 1
+            if self.time_remaining <= 0:
+                print(f"Finished printing: {self.current_job}")
+                self.jobs_completed += 1
+                self.current_job = None
+                return True
+        return False
+def simulate_print_queue():
+    """Simulate a printer processing jobs from a queue."""
+    print_queue = LinkedQueue()
+    printer = Printer(10)
 
+    jobs = [
+        PrintJob("Report", 5),
+        PrintJob("Homework", 3),
+        PrintJob("Article", 8),
+        PrintJob("Presentation", 12),
+        PrintJob("Resume", 2)
+    ]
+    print("Starting printer simulation...")
+    for job in jobs:
+        print(f"Adding job to queue: {job}")
+        print_queue.enqueue(job)
+
+    for second in range(1, 121):
+        if not printer.is_busy() and not print_queue.is_empty():
+            next_job = print_queue.dequeue()
+            printer.start_next_job(next_job)
+        printer.tick()
+        if print_queue.is_empty() and not printer.is_busy():
+            print(f"All jobs completed at second {second}.")
+            break
+
+        if second % 10 == 0:
+            jobs_left = print_queue.size()
+            print(f"Time: {second}s, Jobs in queue: {jobs_left}, Printer busy: {printer.is_busy()}")
+
+    print(f"Simulation ended. Completed {printer.jobs_completed} out of {len(jobs)} jobs.")
+# Run the simulation
+simulate_print_queue()

@@ -1,1 +1,113 @@
+#ejercicio 2.1
+class CircularQueue:
+    """Queue implementation using a circular array."""
+    
+    def __init__(self, capacity=10):
+        """Initialize an empty queue with a fixed capacity."""
+        self.capacity = capacity
+        self.queue = [None] * capacity
+        self.front = self.rear = -1
+        self.size = 0
+    
+    def is_empty(self):
+        """Check if the queue is empty."""
+        return self.size == 0
+    
+    def is_full(self):
+        """Check if the queue is full."""
+        return self.size == self.capacity
+    
+    def enqueue(self, item):
+        """Add an item to the rear of the queue."""
+        if self.is_full():
+            raise OverflowError("Queue is full")
+        
+        # If queue is empty, set front to 0
+        if self.is_empty():
+            self.front = 0
+            self.rear = 0
+        else:
+            # Circular increment of rear
+            self.rear = (self.rear + 1) % self.capacity
+            
+        self.queue[self.rear] = item
+        self.size += 1
+    
+    def dequeue(self):
+        """Remove and return the front item from the queue."""
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        
+        item = self.queue[self.front]
+        
+        # If queue has only one element, reset queue
+        if self.front == self.rear:
+            self.front = self.rear = -1
+        else:
+            # Circular increment of front
+            self.front = (self.front + 1) % self.capacity
+            
+        self.size -= 1
+        return item
+    
+    def peek(self):
+        """Return the front item without removing it."""
+        if self.is_empty():
+            raise IndexError("Queue is empty")
+        return self.queue[self.front]
+    
+    def __str__(self):
+        """Return a string representation of the queue."""
+        if self.is_empty():
+            return "Queue: []"
+        
+        items = []
+        index = self.front
+        for _ in range(self.size):
+            items.append(str(self.queue[index]))
+            index = (index + 1) % self.capacity
+            
+        return f"Queue: [{', '.join(items)}]"
+def test_circular_queue():
+    """Test circular queue implementation."""
+    print("\nTesting circular queue implementation:")
+    queue = CircularQueue(5)
 
+    print(f"Empty queue: {queue}")
+    print(f"Is empty? {queue.is_empty()}")
+    # Enqueue operations
+    for i in range(1, 4):
+        queue.enqueue(i * 10)
+        print(f"After enqueue({i*10}): {queue}")
+    
+    # Test peek
+    print(f"Peek: {queue.peek()}")
+    
+    # Test dequeue
+    print(f"Dequeue: {queue.dequeue()}")
+    print(f"After dequeue: {queue}")
+    
+    # Enqueue more items to demonstrate circular behavior
+    queue.enqueue(40)
+    queue.enqueue(50)
+    print(f"After enqueuing more items: {queue}")
+    
+    # Test full queue
+    try:
+        queue.enqueue(60)
+    except OverflowError as e:
+        print(f"Error as expected: {e}")
+    
+    # Dequeue and enqueue to demonstrate circularity
+    print(f"Dequeue: {queue.dequeue()}")
+    queue.enqueue(60)
+    print(f"After dequeue and enqueue(60): {queue}")
+    
+    # Empty the queue
+    while not queue.is_empty():
+        print(f"Dequeue: {queue.dequeue()}")
+    
+    print(f"Final queue: {queue}")
+# Example usage
+if __name__ == "__main__":
+    test_circular_queue()

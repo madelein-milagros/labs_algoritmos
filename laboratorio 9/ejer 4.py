@@ -1,60 +1,59 @@
 class GenericTreeNode:
-    """Represents a node in a generic tree"""
+    """Representa un nodo en un árbol genérico"""
     def __init__(self, value):
-        self.value = value  # Stores the value of the node
-        self.children = []  # List to store references to child nodes
+        self.value = value  # Almacena el valor del nodo
+        self.children = []  # Lista para almacenar referencias a los nodos hijos
 
 class GenericTree:
-    """Generic tree implementation"""
+    """Implementación de un árbol genérico"""
     def __init__(self, root=None):
-        self.root = root  # Initializes the root of the tree
+        self.root = root  # Inicializa la raíz del árbol
     
     def find_leaves(self):
-        """Finds all leaf nodes in the tree"""
+        """Encuentra todos los nodos hoja en el árbol"""
         def collect_leaves(node):
-            if not node:  # If the node is None (empty tree), return an empty list
+            if not node:  # Si el nodo es None (árbol vacío), devuelve una lista vacía
                 return []
-            if not node.children:  # If the node has no children, it's a leaf
-                return [node.value]  # Add the leaf node's value to the list
-            leaves = []  # Initialize an empty list to store leaf nodes
-            for child in node.children:  # Recursively iterate over each child
-                leaves.extend(collect_leaves(child))  # Collect leaves from the subtree
-            return leaves  # Return the collected leaf values
+            if not node.children:  # Si el nodo no tiene hijos, es una hoja
+                return [node.value]  # Agrega el valor del nodo hoja a la lista
+            leaves = []  # Inicializa una lista vacía para almacenar los nodos hoja
+            for child in node.children:  # Itera recursivamente sobre cada hijo
+                leaves.extend(collect_leaves(child))  # Recoge las hojas del subárbol
+            return leaves  # Devuelve los valores de las hojas recolectadas
 
-        return collect_leaves(self.root)  # Start the recursive search from the root
+        return collect_leaves(self.root)  # Comienza la búsqueda recursiva desde la raíz
 
-# ✅ Test cases
-# Test 1: Empty tree
-empty_tree = GenericTree(None)  # Create an empty tree with no root
-print(empty_tree.find_leaves() == [])  # Expected output: [] (no leaves in the tree)
+# ✅ Casos de prueba
+# Prueba 1: Árbol vacío
+empty_tree = GenericTree(None)  # Crea un árbol vacío sin raíz
+print(empty_tree.find_leaves() == [])  # Salida esperada: [] (no hay hojas en el árbol)
 
-# Test 2: Single node (root is leaf)
-single = GenericTree(GenericTreeNode('X'))  # Create a tree with a single node 'X'
-print(single.find_leaves() == ['X'])  # Expected output: ['X'] (root itself is a leaf)
+# Prueba 2: Un solo nodo (la raíz es hoja)
+single = GenericTree(GenericTreeNode('X'))  # Crea un árbol con un solo nodo 'X'
+print(single.find_leaves() == ['X'])  # Salida esperada: ['X'] (la raíz es una hoja)
 
-# Test 3: Linear tree A → B → C
-linear_root = GenericTreeNode('A')  # Root node 'A'
-linear_b = GenericTreeNode('B')  # Child node 'B'
-linear_c = GenericTreeNode('C')  # Child node 'C'
-linear_root.children = [linear_b]  # 'A' has one child: 'B'
-linear_b.children = [linear_c]  # 'B' has one child: 'C'
-linear_tree = GenericTree(linear_root)  # Create tree with the root 'A'
-print(linear_tree.find_leaves() == ['C'])  # Expected output: ['C'] (last node is a leaf)
+# Prueba 3: Árbol lineal A → B → C
+linear_root = GenericTreeNode('A')  # Nodo raíz 'A'
+linear_b = GenericTreeNode('B')  # Nodo hijo 'B'
+linear_c = GenericTreeNode('C')  # Nodo hijo 'C'
+linear_root.children = [linear_b]  # 'A' tiene un hijo: 'B'
+linear_b.children = [linear_c]  # 'B' tiene un hijo: 'C'
+linear_tree = GenericTree(linear_root)  # Crea el árbol con la raíz 'A'
+print(linear_tree.find_leaves() == ['C'])  # Salida esperada: ['C'] (el último nodo es una hoja)
 
-# Test 4: Multiple leaves
-tree_root = GenericTreeNode('A')  # Root node 'A'
-b, c, d = GenericTreeNode('B'), GenericTreeNode('C'), GenericTreeNode('D')  # Children of 'A'
-e, f, g, h = GenericTreeNode('E'), GenericTreeNode('F'), GenericTreeNode('G'), GenericTreeNode('H')  # Leaves
-tree_root.children = [b, c, d]  # Assign children to 'A'
-b.children = [e, f, g]  # Assign leaves to 'B'
-d.children = [h]  # Assign leaf to 'D'
-tree = GenericTree(tree_root)  # Create tree
-print(sorted(tree.find_leaves()) == ['C', 'E', 'F', 'G', 'H'])  # Expected output: all leaf nodes sorted
+# Prueba 4: Múltiples hojas
+tree_root = GenericTreeNode('A')  # Nodo raíz 'A'
+b, c, d = GenericTreeNode('B'), GenericTreeNode('C'), GenericTreeNode('D')  # Hijos de 'A'
+e, f, g, h = GenericTreeNode('E'), GenericTreeNode('F'), GenericTreeNode('G'), GenericTreeNode('H')  # Hojas
+tree_root.children = [b, c, d]  # Asigna hijos a 'A'
+b.children = [e, f, g]  # Asigna hojas a 'B'
+d.children = [h]  # Asigna hoja a 'D'
+tree = GenericTree(tree_root)  # Crea el árbol
+print(sorted(tree.find_leaves()) == ['C', 'E', 'F', 'G', 'H'])  # Salida esperada: todas las hojas ordenadas
 
-# Test 5: Wide tree
-wide_root = GenericTreeNode('A')  # Root node 'A'
+# Prueba 5: Árbol ancho
+wide_root = GenericTreeNode('A')  # Nodo raíz 'A'
 wide_root.children = [GenericTreeNode('B'), GenericTreeNode('C'), GenericTreeNode('D'), 
-                        GenericTreeNode('E'), GenericTreeNode('F')]  # Direct children (all leaves)
-wide_tree = GenericTree(wide_root)  # Create the tree
-print(sorted(wide_tree.find_leaves()) == ['B', 'C', 'D', 'E', 'F'])  # Expected output: all leaves sorted
-
+                        GenericTreeNode('E'), GenericTreeNode('F')]  # Hijos directos (todos hojas)
+wide_tree = GenericTree(wide_root)  # Crea el árbol
+print(sorted(wide_tree.find_leaves()) == ['B', 'C', 'D', 'E', 'F'])  # Salida esperada: todas las hojas ordenadas

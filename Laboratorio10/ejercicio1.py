@@ -1,7 +1,7 @@
 def infix_to_postfix(tokens):
     """Convertir una expresión infija a notación postfix"""
-
-    # Diccionario que define la precedencia de cada operador
+    
+    # Diccionario que define la precedencia de los operadores
     precedence = {
         '+': 1,
         '-': 1,
@@ -9,40 +9,53 @@ def infix_to_postfix(tokens):
         '/': 2
     }
 
-    output = []  # Lista donde almacenaremos la expresión en postfix
-    stack = []   # Pila para guardar operadores temporalmente
+    output = []  # Donde almacenamos la salida en formato postfix
+    stack = []   # Pila temporal para operadores y paréntesis
 
     for token in tokens:
-        if token.isalnum():  
-            # Si el token es un operando (número o variable), agregarlo directamente al output
+        # Caso 1: Si el token es un operando (número o variable)
+        if token.isalnum():
             output.append(token)
+
+        # Caso 2: Si el token es un paréntesis abierto '('
         elif token == '(':
-            # Si es un paréntesis abierto, simplemente apilarlo
             stack.append(token)
+
+        # Caso 3: Si el token es un paréntesis cerrado ')'
         elif token == ')':
-            # Si es un paréntesis cerrado, sacar operadores hasta encontrar el '('
+            # Sacar elementos hasta encontrar el '('
             while stack and stack[-1] != '(':
-                output.append(stack.pop())  # Sacar operadores y agregarlos al output
-            stack.pop()  # Remover el '(' de la pila sin agregarlo al output
+                output.append(stack.pop())
+            stack.pop()  # Eliminar el '(' de la pila (no se agrega al output)
+
+        # Caso 4: Si el token es un operador (+, -, *, /)
         else:
-            # Si es un operador (+, -, *, /)
-            # Mientras haya operadores en la pila con mayor o igual precedencia,
-            # sacarlos y ponerlos en output antes de apilar el nuevo operador
+            # Desapilar operadores con mayor o igual precedencia
             while stack and stack[-1] != '(' and precedence.get(stack[-1], 0) >= precedence.get(token, 0):
                 output.append(stack.pop())
-            stack.append(token)  # Apilar el operador actual
+            stack.append(token)
 
-    # Una vez procesados todos los tokens, sacar los operadores restantes de la pila
+    # Al final, desapilamos todos los operadores restantes
     while stack:
         output.append(stack.pop())
 
     return output
+# Test 1: Suma simple
+# Infix: 2 + 3 → Postfix: ['2', '3', '+']
+print(infix_to_postfix(['2', '+', '3']) == ['2', '3', '+'])  # True
 
+# Test 2: Prioridad de operadores
+# Infix: 2 + 3 * 4 → Postfix: ['2', '3', '4', '*', '+']
+print(infix_to_postfix(['2', '+', '3', '*', '4']) == ['2', '3', '4', '*', '+'])  # True
 
-# Pruebas para verificar que la función funciona correctamente
-print(infix_to_postfix(['2', '+', '3']) == ['2', '3', '+'])  # True - Suma simple
-print(infix_to_postfix(['2', '+', '3', '*', '4']) == ['2', '3', '4', '*', '+'])  # True - Prioridad multiplicación
-print(infix_to_postfix(['(', '2', '+', '3', ')', '*', '4']) == ['2', '3', '+', '4', '*'])  # True - Paréntesis cambia prioridad
-print(infix_to_postfix(['(', '1', '+', '2', ')', '*', '(', '3', '-', '4', ')']) == ['1', '2', '+', '3', '4', '-', '*'])  # True - Expresión compleja con paréntesis
-print(infix_to_postfix(['a', '+', 'b', '*', 'c', '/', 'd']) == ['a', 'b', 'c', '*', 'd', '/', '+'])  # True - Variables con operadores
+# Test 3: Paréntesis cambia prioridad
+# Infix: (2 + 3) * 4 → Postfix: ['2', '3', '+', '4', '*']
+print(infix_to_postfix(['(', '2', '+', '3', ')', '*', '4']) == ['2', '3', '+', '4', '*'])  # True
 
+# Test 4: Expresión compleja con paréntesis
+# Infix: (1 + 2) * (3 - 4) → Postfix: ['1', '2', '+', '3', '4', '-', '*']
+print(infix_to_postfix(['(', '1', '+', '2', ')', '*', '(', '3', '-', '4', ')']) == ['1', '2', '+', '3', '4', '-', '*'])  # True
+
+# Test 5: Variables con operadores
+# Infix: a + b * c / d → Postfix: ['a', 'b', 'c', '*', 'd', '/', '+']
+print(infix_to_postfix(['a', '+', 'b', '*', 'c', '/', 'd']) == ['a', 'b', 'c', '*', 'd', '/', '+'])  # True
